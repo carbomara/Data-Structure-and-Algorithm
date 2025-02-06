@@ -22,7 +22,7 @@ public class DSAMilestone1 {
         }
         @Override
         public String toString() {
-            return "Date: " + dateEntered + ", Status: " + status + ", Brand: " + brand + ", Engine Number: " + engineNumber + ", Purchase Status: " + purchaseStatus;
+            return "Status: " + status + ", Brand: " + brand + ", Engine Number: " + engineNumber + ", Purchase Status: " + purchaseStatus;
         }
     }
 
