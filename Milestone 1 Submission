@@ -1,0 +1,327 @@
+import java.util.*;
+import java.text.*;
+import java.util.Date;
+
+
+public class DSAMilestone1 {
+
+    // Class to represent a stock item
+    static class Stock {
+        String dateEntered;
+        String status;
+        String brand;
+        String engineNumber;
+        String purchaseStatus;
+
+        public Stock(String dateEntered, String status, String brand, String engineNumber, String purchaseStatus) {
+            this.dateEntered = dateEntered;
+            this.status = status;
+            this.brand = brand;
+            this.engineNumber = engineNumber;
+            this.purchaseStatus = purchaseStatus;
+        }
+        @Override
+        public String toString() {
+            return "Date: " + dateEntered + ", Status: " + status + ", Brand: " + brand + ", Engine Number: " + engineNumber + ", Purchase Status: " + purchaseStatus;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // LinkedList to manage inventory
+        LinkedList<Stock> inventory = new LinkedList<>();
+
+        // Stack for undo functionality (e.g., undo last added stock)
+        Stack<Stock> undoStack = new Stack<>();
+
+        // Load initial data from the CSV file (manually added here for demonstration)
+        inventory.add(new Stock("2/1/2023", "Old", "Honda", "142QVTSIUR", "On-hand"));
+        inventory.add(new Stock("2/1/2023", "Old", "Honda", "PZCT1S00XE", "Sold"));
+        inventory.add(new Stock("2/1/2023", "Old", "Honda", "4VBTV8YNM7", "Sold"));
+        inventory.add(new Stock("2/1/2023", "Old", "Honda", "95AN3AWVF4", "On-hand"));
+        inventory.add(new Stock("2/3/2023", "Old", "Kawasaki", "483QHIM661", "On-hand"));
+        inventory.add(new Stock("2/3/2023", "Old", "Kymco", "SPHA17SSEE", "On-hand"));
+        inventory.add(new Stock("2/3/2023", "Old", "Kymco", "0AV7SWGX93", "Sold"));
+        inventory.add(new Stock("2/4/2023", "Old", "Kymco", "QMUB6UYLKL", "Sold"));
+        inventory.add(new Stock("2/4/2023", "Old", "Honda", "V96GMTFFEI", "Sold"));
+        inventory.add(new Stock("2/5/2023", "Old", "Kawasaki", "4J8UA0FMVY", "Sold"));
+        inventory.add(new Stock("2/5/2023", "Old", "Kawasaki", "A8BDL926FA", "Sold"));
+        inventory.add(new Stock("2/5/2023", "Old", "Kawasaki", "X8G5ZZ7A69", "Sold"));
+        inventory.add(new Stock("2/6/2023", "Old", "Honda", "TY5SU0WPDX", "On-hand"));
+        inventory.add(new Stock("2/6/2023", "Old", "Honda", "5Q0EZG7WKB", "On-hand"));
+        inventory.add(new Stock("2/6/2023", "Old", "Suzuki", "9XUOUOJ2XZ", "On-hand"));
+        inventory.add(new Stock("2/6/2023", "Old", "Kymco", "YUL4UTC4FU", "On-hand"));
+        inventory.add(new Stock("2/6/2023", "Old", "Kymco", "2ESQRHAXWG", "On-hand"));
+        inventory.add(new Stock("2/7/2023", "Old", "Kymco", "J8JA99VWZE", "Sold"));
+        inventory.add(new Stock("2/7/2023", "Old", "Kymco", "NS530HOT9H", "Sold"));
+        inventory.add(new Stock("2/7/2023", "Old", "Suzuki", "URIA0XXM05", "Sold"));
+        inventory.add(new Stock("2/7/2023", "Old", "Yamaha", "IDN93SI4KW", "Sold"));
+        inventory.add(new Stock("2/7/2023", "Old", "Honda", "PVAWKD51CE", "Sold"));
+        inventory.add(new Stock("2/7/2023", "Old", "Honda", "K4KHCQAU41", "Sold"));
+        inventory.add(new Stock("2/8/2023", "Old", "Honda", "Z4NY5JGZZT", "Sold"));
+        inventory.add(new Stock("2/8/2023", "Old", "Honda", "IRQACSKUNZ", "Sold"));
+        inventory.add(new Stock("2/8/2023", "Old", "Yamaha", "TMZCTALNDL", "Sold"));
+        inventory.add(new Stock("2/8/2023", "Old", "Yamaha", "DVFUIA0YVB", "Sold"));
+        inventory.add(new Stock("2/8/2023", "Old", "Kymco", "4M793VVAHI", "On-hand"));
+        inventory.add(new Stock("2/8/2023", "Old", "Suzuki", "5N7IQVJ2BA", "On-hand"));
+        inventory.add(new Stock("3/1/2023", "New", "Suzuki", "NO8VW05PU9", "On-hand"));
+        inventory.add(new Stock("3/1/2023", "New", "Yamaha", "NWIP2MQEIN", "Sold"));
+        inventory.add(new Stock("3/1/2023", "New", "Kawasaki", "1HCWCVZSX8", "Sold"));
+        inventory.add(new Stock("3/3/2023", "New", "Kawasaki", "Z46VKPIJBY", "Sold"));
+        inventory.add(new Stock("3/3/2023", "New", "Kawasaki", "LYQVEHJ6IU", "Sold"));
+        inventory.add(new Stock("3/3/2023", "New", "Yamaha", "BVGQQNMATL", "Sold"));
+        inventory.add(new Stock("3/4/2023", "New", "Kymco", "URWMSQZCBU", "Sold"));
+        inventory.add(new Stock("3/4/2023", "New", "Yamaha", "5NGI5UZ8T2", "On-hand"));
+        inventory.add(new Stock("3/5/2023", "New", "Honda", "W2UYM0EIRS", "On-hand"));
+        inventory.add(new Stock("3/5/2023", "New", "Honda", "AITLTSJUK2", "On-hand"));
+        inventory.add(new Stock("3/5/2023", "New", "Yamaha", "45CNYV7IFF", "On-hand"));
+        inventory.add(new Stock("3/6/2023", "New", "Kymco", "MXS36NKV96", "Sold"));
+        inventory.add(new Stock("3/6/2023", "New", "Kymco", "PWM3MJWPYE", "Sold"));
+        inventory.add(new Stock("3/6/2023", "New", "Kymco", "5I80N9HB7W", "Sold"));
+        inventory.add(new Stock("3/6/2023", "New", "Yamaha", "D01JMJL9PG", "On-hand"));
+        inventory.add(new Stock("3/6/2023", "New", "Suzuki", "1R88BOJW8W", "On-hand"));
+        inventory.add(new Stock("3/7/2023", "New", "Suzuki", "LAMH9Y1YD6", "On-hand"));
+        inventory.add(new Stock("3/7/2023", "New", "Yamaha", "02G7NJCRGS", "On-hand"));
+        inventory.add(new Stock("3/7/2023", "New", "Kawasaki", "392XSUBMUW", "On-hand"));
+
+        while (true) {
+            System.out.println("\nMotorPH Inventory System");
+            System.out.println("1. Add New Stock");
+            System.out.println("2. Manage Stocks (Delete/Undo)");
+            System.out.println("3. Sort, Search, and Sort by Brand");
+            System.out.println("4. Display Inventory and Summary");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    // Add new stock with system date as default
+                    String date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());  // Get system date
+                    System.out.println("Date: " + date);  // Just to confirm the date
+                    System.out.print("Enter Status (New/Old): ");
+                    String status = scanner.nextLine();
+                    System.out.print("Enter Brand: ");
+                    String brand = scanner.nextLine();
+                    System.out.print("Enter Engine Number: ");
+                    String engineNumber = scanner.nextLine();
+                    System.out.print("Enter Purchase Status (On-hand/Sold): ");
+                    String purchaseStatus = scanner.nextLine();
+
+                    Stock newStock = new Stock(date, status, brand, engineNumber, purchaseStatus);
+                    inventory.add(newStock);
+                    undoStack.push(newStock); // Push to undo stack
+                    System.out.println("Stock added successfully!");
+                    break;
+
+
+                case 2:
+                    // Manage stocks (delete or undo last added stock)
+                    System.out.println("1. Delete Stock");
+                    System.out.println("2. Undo Last Added Stock");
+                    System.out.print("Choose an option: ");
+                    int manageChoice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+
+                    if (manageChoice == 1) {
+                        // Delete stock by engine number with confirmation
+                        while (true) {
+                            System.out.print("Enter Engine Number to Delete: ");
+                            String engineToDelete = scanner.nextLine();
+                            Stock stockToDelete = null;
+                            for (Stock stock : inventory) {
+                                if (stock.engineNumber.equals(engineToDelete)) {
+                                    stockToDelete = stock;
+                                    break;
+                                }
+                            }
+                            if (stockToDelete != null) {
+                                System.out.println("Are you sure you want to delete this stock? " + stockToDelete + " (yes/no)");
+                                String confirmation = scanner.nextLine().trim().toLowerCase();
+                                if (confirmation.equals("yes")) {
+                                    inventory.remove(stockToDelete);
+                                    System.out.println("Stock deleted successfully.");
+                                } else {
+                                    System.out.println("Stock deletion canceled.");
+                                }
+                                break;
+                            } else {
+                                System.out.println("No stock found with the given engine number. Please enter a valid engine number.\n");
+                            }
+                        }
+                    } else if (manageChoice == 2) {
+                        // Undo last added stock
+                        if (!undoStack.isEmpty()) {
+                            Stock lastAdded = undoStack.pop();
+                            inventory.remove(lastAdded);
+                            System.out.println("Last added stock has been undone:");
+                            System.out.println(lastAdded);
+                        } else {
+                            System.out.println("No actions to undo.");
+                        }
+                    } else {
+                        System.out.println("Invalid option. Returning to main menu.");
+                    }
+                    break;
+
+                case 3:
+                    // Filter, search, and count by brand
+                    while (true) {
+                        System.out.println("Select brand: 1.Honda 2.Kawasaki 3.Kymco 4.Suzuki 5.Yamaha 6.All");
+                        System.out.print("Enter choice: ");
+                        int brandChoice = scanner.nextInt();
+                        scanner.nextLine();
+
+                        String selectedBrand = null;
+                        switch (brandChoice) {
+                            case 1:
+                                selectedBrand = "Honda";
+                                break;
+                            case 2:
+                                selectedBrand = "Kawasaki";
+                                break;
+                            case 3:
+                                selectedBrand = "Kymco";
+                                break;
+                            case 4:
+                                selectedBrand = "Suzuki";
+                                break;
+                            case 5:
+                                selectedBrand = "Yamaha";
+                                break;
+                            case 6:
+                                selectedBrand = "All";
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Try again.");
+                                continue;
+                        }
+
+                        if (selectedBrand.equals("All")) {
+                            System.out.println("All stocks:");
+                            displayInventory(inventory);
+                        } else {
+                            List<Stock> filtered = filterByBrand(inventory, selectedBrand);
+                            System.out.println("Stocks for brand: " + selectedBrand);
+                            displayInventory(filtered);
+                            System.out.println("Total: " + filtered.size());
+                            int onHandCount = 0, soldCount = 0;
+                            for (Stock stock : filtered) {
+                                if (stock.purchaseStatus.equalsIgnoreCase("On-hand")) {
+                                    onHandCount++;
+                                } else if (stock.purchaseStatus.equalsIgnoreCase("Sold")) {
+                                    soldCount++;
+                                }
+                            }
+                            System.out.println("On-hand: " + onHandCount);
+                            System.out.println("Sold: " + soldCount);
+                        }
+
+                        System.out.print("Search for a specific engine number? (yes/no): ");
+                        String response = scanner.nextLine().trim().toLowerCase();
+                        if (response.equals("yes")) {
+                            System.out.print("Enter Engine Number: ");
+                            String searchEngine = scanner.nextLine();
+                            List<Stock> searchResults = searchByEngineNumber(inventory, searchEngine);
+                            if (searchResults.isEmpty()) {
+                                System.out.println("No stock found with the given engine number.");
+                            } else {
+                                System.out.println("Search results:");
+                                displayInventory(searchResults);
+                            }
+                        }
+
+                        System.out.print("Would you like to filter again? (yes/no): ");
+                        String repeat = scanner.nextLine().trim().toLowerCase();
+                        if (repeat.equals("no")) {
+                            break;
+                        }
+                    }
+                    break;
+
+                case 4:
+                    // Display inventory and summary
+                    if (inventory.isEmpty()) {
+                        System.out.println("Inventory is empty.");
+                    } else {
+                        displayInventory(inventory);
+                        displaySummary(inventory);
+                    }
+                    break;
+
+                case 5:
+                    // Exit program
+                    System.out.println("Exiting program. Goodbye!");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    // Validate date format
+    public static boolean isValidDate(String date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    // Filter inventory by brand
+    public static List<Stock> filterByBrand(List<Stock> inventory, String brand) {
+        List<Stock> filtered = new ArrayList<>();
+        for (Stock stock : inventory) {
+            if (stock.brand.equalsIgnoreCase(brand)) {
+                filtered.add(stock);
+            }
+        }
+        return filtered;
+    }
+
+    // Search inventory by engine number
+    public static List<Stock> searchByEngineNumber(List<Stock> inventory, String engineNumber) {
+        List<Stock> searchResults = new ArrayList<>();
+        for (Stock stock : inventory) {
+            if (stock.engineNumber.equalsIgnoreCase(engineNumber)) {
+                searchResults.add(stock);
+            }
+        }
+        return searchResults;
+    }
+
+    // Display inventory with numbering
+    public static void displayInventory(List<Stock> inventory) {
+        int index = 1;
+        for (Stock stock : inventory) {
+            System.out.println(index + ". " + stock);
+            index++;
+        }
+    }
+
+    // Display inventory summary without using HashMap
+    public static void displaySummary(List<Stock> inventory) {
+        int onHandCount = 0, soldCount = 0;
+
+        // Count On-hand and Sold stocks
+        for (Stock stock : inventory) {
+            if (stock.purchaseStatus.equalsIgnoreCase("On-hand")) {
+                onHandCount++;
+            } else if (stock.purchaseStatus.equalsIgnoreCase("Sold")) {
+                soldCount++;
+            }
+        }
+
+        System.out.println(" Summary:");
+        System.out.println("Total Stocks: " + inventory.size());
+        System.out.println("On-hand: " + onHandCount);
+        System.out.println("Sold: " + soldCount);
+    }
+}
