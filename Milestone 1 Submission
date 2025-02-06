@@ -89,7 +89,7 @@ public class DSAMilestone1 {
             System.out.println("\nMotorPH Inventory System");
             System.out.println("1. Add New Stock");
             System.out.println("2. Manage Stocks (Delete/Undo)");
-            System.out.println("3. Sort, Search, and Sort by Brand");
+            System.out.println("3. Sort, Search, and Count by Brand");
             System.out.println("4. Display Inventory and Summary");
             System.out.println("5. Exit");
             System.out.print("Choose an option: ");
