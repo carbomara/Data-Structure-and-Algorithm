@@ -110,7 +110,7 @@ public class DSAMilestone2 {
                         scanner.nextLine(); // Consume newline
 
                         if (manageChoice == 1) {
-                            // Delete stock by engine number with confirmation
+                            // Delete stock by engine number with validation
                             while (true) {
                                 System.out.print("Enter Engine Number to Delete: ");
                                 String engineToDelete = scanner.nextLine();
@@ -122,13 +122,17 @@ public class DSAMilestone2 {
                                     }
                                 }
                                 if (stockToDelete != null) {
-                                    System.out.println("Are you sure you want to delete this stock? " + stockToDelete + " (yes/no)");
-                                    String confirmation = scanner.nextLine().trim().toLowerCase();
-                                    if (confirmation.equals("yes")) {
-                                        inventory.remove(stockToDelete);
-                                        System.out.println("Stock deleted successfully.");
+                                    if (stockToDelete.status.equals("Old") && stockToDelete.purchaseStatus.equals("Sold")) {
+                                        System.out.println("Are you sure you want to delete this stock? " + stockToDelete + " (yes/no)");
+                                        String confirmation = scanner.nextLine().trim().toLowerCase();
+                                        if (confirmation.equals("yes")) {
+                                            inventory.remove(stockToDelete);
+                                            System.out.println("Stock deleted successfully.");
+                                        } else {
+                                            System.out.println("Stock deletion canceled.");
+                                        }
                                     } else {
-                                        System.out.println("Stock deletion canceled.");
+                                        System.out.println("Only 'Old' and 'Sold' stocks can be deleted.");
                                     }
                                 } else {
                                     System.out.println("No stock found with the given engine number. Please enter a valid engine number.\n");
@@ -154,8 +158,6 @@ public class DSAMilestone2 {
                         } else {
                             System.out.println("Invalid option. Returning to main menu.");
                         }
-
-                        // Exit manage stocks loop
                         break;
                     }
                     break;
