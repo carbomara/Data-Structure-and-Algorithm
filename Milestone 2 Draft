@@ -32,7 +32,7 @@ public class DSAMilestone1 {
         // LinkedList to manage inventory
         LinkedList<Stock> inventory = new LinkedList<>();
 
-        // Stack for undo functionality (e.g., undo last added stock)
+        // Stack for undo functionality
         Stack<Stock> undoStack = new Stack<>();
 
         // Load initial data from the CSV file
@@ -133,11 +133,13 @@ public class DSAMilestone1 {
                     do {
                         // Search and count by brand
                         System.out.println("Sort by Brand:");
+                        //HashSet Implementation
                         Set<String> brands = new HashSet<>();
                         for (Stock stock : inventory) {
                             brands.add(stock.brand);
                         }
                         int i = 1;
+                        // ArrayList Implementation
                         List<String> brandList = new ArrayList<>(brands);
                         for (String brandName : brandList) {
                             System.out.println(i + ". " + brandName);
@@ -211,6 +213,7 @@ public class DSAMilestone1 {
     }
 
     // Load inventory from CSV file
+    // LinkedList Implementation
     public static void loadInventoryFromCSV(LinkedList<Stock> inventory, String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -279,7 +282,7 @@ public class DSAMilestone1 {
         return -1;
     }
 
-    // Filter inventory by brand
+    // Linear Search Implementation
     public static List<Stock> filterByBrand(List<Stock> inventory, String brand) {
         List<Stock> filtered = new ArrayList<>();
         for (Stock stock : inventory) {
@@ -300,6 +303,7 @@ public class DSAMilestone1 {
     }
 
     // Display inventory summary
+    // Counting Implementation
     public static void displaySummary(List<Stock> inventory) {
         int onHandCount = 0, soldCount = 0;
 
