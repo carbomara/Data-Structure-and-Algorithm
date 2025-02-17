@@ -52,21 +52,52 @@ public class DSAMilestone2 {
             switch (choice) {
                 case 1:
                     // Add new stock with system date as default
-                    String date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());  // Get system date
-                    System.out.println("Date: " + date);  // Just to confirm the date
-                    System.out.print("Enter Status (New/Old): ");
-                    String status = scanner.nextLine();
+                    String date = new SimpleDateFormat("MM/dd/yyyy").format(new Date()); // Get system date
+                    String engineNumber;
+                    boolean exists;
+
+                    // Validate engine number first
+                    do {
+                        System.out.print("Enter Engine Number: ");
+                        engineNumber = scanner.nextLine();
+
+                        // Check if engine number already exists
+                        exists = false;
+                        for (Stock stock : inventory) {
+                            if (stock.engineNumber.equals(engineNumber)) {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (exists) {
+                            System.out.println("Engine Number already exists. Try again or return to menu.");
+                            System.out.print("Do you want to enter a new Engine Number? (yes/no): ");
+                            String response = scanner.nextLine().trim().toLowerCase();
+                            if (!response.equals("yes")) {
+                                return; // Return to menu if user doesn't want to re-enter
+                            }
+                        }
+                    } while (exists);
+
+                    // Proceed to enter brand after validation
                     System.out.print("Enter Brand: ");
                     String brand = scanner.nextLine();
-                    System.out.print("Enter Engine Number: ");
-                    String engineNumber = scanner.nextLine();
-                    System.out.print("Enter Purchase Status (On-hand/Sold): ");
-                    String purchaseStatus = scanner.nextLine();
 
+                    // Assign default values
+                    String status = "New";
+                    String purchaseStatus = "On-Hand";
+
+                    // Create new stock entry
                     Stock newStock = new Stock(date, status, brand, engineNumber, purchaseStatus);
+
+                    // Add to inventory
                     inventory.add(newStock);
-                    undoStack.push(newStock); // Push to undo stack
-                    System.out.println("Stock added successfully!");
+
+                    // Push to undo stack
+                    undoStack.push(newStock);
+
+                    System.out.println("Stock added successfully! Details: " + newStock);
                     break;
 
                 case 2:
