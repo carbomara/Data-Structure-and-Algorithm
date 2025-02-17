@@ -2,7 +2,7 @@ import java.util.*;
 import java.text.*;
 import java.io.*;
 
-public class DSAMilestone1 {
+public class DSAMilestone2 {
 
     // Class to represent a stock item
     static class Stock {
